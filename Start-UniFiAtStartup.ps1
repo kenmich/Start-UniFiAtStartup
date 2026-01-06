@@ -12,10 +12,6 @@ $taskname = "Start-UniFi"
 Unregister-ScheduledTask -TaskName $taskname -Confirm:$false -ErrorAction SilentlyContinue
 $action = New-ScheduledTaskAction -Execute $javapath -Argument "-jar $($acepath)"
 $trigger = New-ScheduledTaskTrigger -AtStartup
+$trigger.Delay = 'PT5M' # 5 minutes
 $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount -RunLevel Highest
 Register-ScheduledTask -TaskName $taskname -Action $action -Trigger $trigger -Principal $principal
-
-# Add delayed start, as it's not supported by Register-ScheduledTask
-$taskObj = Get-ScheduledTask -TaskName $taskname
-$taskObj.Triggers[0].Delay = "PT1M"
-$taskObj | Set-ScheduledTask
